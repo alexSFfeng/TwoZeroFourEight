@@ -3,6 +3,8 @@ boolean start = true;
 boolean gameover = false;
 boolean notHit = true;
 boolean boxRemoved = false;
+boolean isEmpty;
+int globalNum;
 ArrayList <Boxes> box;
 void setup()
 {
@@ -44,17 +46,16 @@ void initialDetection()
 		{
 		  if(box.get(i).getX() == box.get(j).getX() && box.get(i).getY() == box.get(j).getY())
 		  {
-		  	if(box.get(i).getValue() == box.get(j).getValue()) //compare the two values
+			if(box.get(i).getValue() == box.get(j).getValue()) //compare the two values
 		  	{
-		  		box.get(i).setBoxValue(2*box.get(i).getValue()); //create new box and get rid of one of the box
+		  		box.get(i).setBoxValue(2*box.get(i).getValue());
 		  		box.remove(j);
 		  		j--;
 		  	}
-		  	else // if only positions are equal then get rid of box and create new box.
+		  	else
 		  	{
-		  		box.remove(j); 
+		  		box.remove(j);
 		  		box.add(new Boxes(10+195*(int)(Math.random()*4),10+195*(int)(Math.random()*4),2));
-		  		j ++;
 		  	}
 		  }	
 		}
@@ -65,7 +66,7 @@ void initialDetection()
 }
 void detection(String direction)
 {
-	for(int i = 0; i< box.size(); i++)
+	for(int i = globalNum; i< box.size(); i++)
 	{
 		for(int j = box.size()-1; j > i; j--) //see if box matches other boxes
 		{
@@ -81,26 +82,28 @@ void detection(String direction)
 		  	}
 		  	else 
 		  	{
-		  		if(direction.equals("up"))
-		  		{
-		  			box.get(i).downY();
-		  			notHit = false;
-		  		}
-		  		else if(direction.equals("down"))
-		  		{
-		  			box.get(i).upY();
-		  			notHit = false;
-		  		}
-		  		else if(direction.equals("left"))
-		  		{
-		  			box.get(i).rightX();
-		  			notHit = false;
-		  		}
-		  		else
-		  		{
-		  			box.get(i).leftX();
-		  			notHit = false;
-		  		}
+		  	if(direction.equals("up"))
+		  	{
+		  		box.get(i).downY();
+		  		notHit = false;
+
+		  	}
+		  	else if(direction.equals("down"))
+		  	{
+		  		box.get(i).upY();
+		  		notHit = false;
+
+		  	}
+		  	else if(direction.equals("left"))
+		  	{
+		  		box.get(i).rightX();
+		  		notHit = false;
+		  	}
+		  	else
+		  	{
+		  		box.get(i).leftX();
+		  		notHit = false;
+		  	}	
 		  	}
 		  }
 		}
@@ -152,12 +155,9 @@ class Boxes
 	     	{
 
 	     	     box.get(i).upY();
+	     	     globalNum = i;
                  detection("up");	
-	     		 if(boxRemoved)
-	     		 {
-	     		 	
-	     		 	break;
-	     		 }
+
 
 	     	}
 	     }
@@ -174,12 +174,9 @@ class Boxes
 	     	{
  
 	     		 box.get(i).downY();
+	     		 globalNum =i;
                  detection("down");	
-	     		if(boxRemoved)
-	     		 {
-	     		 	
-	     		 	break;
-	     		 }
+
 
 	     	}
 	     }
@@ -197,12 +194,8 @@ class Boxes
 	     	{
 
 	     		  box.get(i).leftX();
+	     		  globalNum = i;
                   detection("left");
-	     		 if(boxRemoved)
-	     		 {
-	     		 	
-	     		 	break;
-	     		 }
 
 	     	}
 	     }
@@ -220,13 +213,10 @@ class Boxes
 	   		{
 
 	   		    box.get(i).rightX();
+	   		    globalNum = i;
 	   			detection("right");	
 	   			
-	     		 if(boxRemoved)
-	     		 {
-	     		 	
-	     		 	break;
-	     		 }
+
 	   		}
 	   	}
 	   	addBox();
