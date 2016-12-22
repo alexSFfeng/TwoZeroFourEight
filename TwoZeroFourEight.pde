@@ -31,7 +31,7 @@ void draw()
 		}
     if(gameover) {
       text("GAME OVER", 400,400);
-      noLoop();
+      //noLoop();
     }
 	}
 	
