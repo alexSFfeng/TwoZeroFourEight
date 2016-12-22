@@ -17,10 +17,8 @@ public class TwoZeroFourEight extends PApplet {
 int side = 195;
 boolean start = true;
 boolean gameover = false;
-boolean notHit = true;
 boolean boxRemoved = false;
 boolean isEmpty;
-int globalNum;
 ArrayList <Boxes> box;
 public void setup()
 {
@@ -39,92 +37,204 @@ public void draw()
 {		
 	fill(255);
 	rect(10,10,780,780);
-	if(start = true)
+	if(start)
 	{
 	  initialDetection();
 	}
-	else if(gameover = false)
-	{
-
-	   for(int i =0; i<box.size();i++)
-	   {
-	   	box.get(i).show();
-	   }
+	else {
+		for (Boxes thisBox : box) {
+			thisBox.show();
+		}
+    if(gameover) {
+      text("GAME OVER", 400,400);
+      noLoop();
+    }
 	}
 	
 	
 }
+// to ensure initial set up is correct
 public void initialDetection()
 {
 	for(int i = 0; i< box.size(); i++)
 	{
 		for(int j = box.size()-1; j > i; j--) //see if box matches other boxes
 		{
-		  if(box.get(i).getX() == box.get(j).getX() && box.get(i).getY() == box.get(j).getY())
+		  if(box.get(i).equals(box.get(j)))
 		  {
-			if(box.get(i).getValue() == box.get(j).getValue()) //compare the two values
-		  	{
-		  		box.get(i).setBoxValue(2*box.get(i).getValue());
-		  		box.remove(j);
-		  		j--;
-		  	}
-		  	else
-		  	{
-		  		box.remove(j);
-		  		box.add(new Boxes(10+195*(int)(Math.random()*4),10+195*(int)(Math.random()*4),2));
-		  	}
+		  	box.get(i).setBoxValue(2*box.get(i).getValue());
+		  	box.remove(j);
+		  }
+		  else if(box.get(i).getX() == box.get(j).getX() &&
+		  	      box.get(i).getY() == box.get(j).getY())
+		  {
+		  	box.remove(j);
+		  	box.add(new Boxes(10+195*(int)(Math.random()*4),10+195*(int)(Math.random()*4),2));
 		  }	
 		}
 		
 		box.get(i).show();
 	}
+	System.out.println(box.size());
 	start = false;
 }
+
 public void detection(String direction)
 {
-	for(int i = globalNum; i< box.size(); i++)
-	{
-		for(int j = box.size()-1; j > i; j--) //see if box matches other boxes
-		{
-		  if(box.get(i).getX() == box.get(j).getX() && box.get(i).getY() == box.get(j).getY())
-		  {
-		  	if(box.get(i).getValue() == box.get(j).getValue()) //compare the two values
-		  	{
-		  		box.get(i).setBoxValue(2*box.get(i).getValue()); //create new box and get rid of one of the box
-		  		box.remove(j);
-		  		j--;
-		  		notHit = false;
-		  		boxRemoved = true;
-		  	}
-		  	else 
-		  	{
-		  	if(direction.equals("up"))
-		  	{
-		  		box.get(i).downY();
-		  		notHit = false;
 
-		  	}
-		  	else if(direction.equals("down"))
-		  	{
-		  		box.get(i).upY();
-		  		notHit = false;
+  if(direction.equals("up"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getY() > 10 && !stop) {
+     	box.get(i).upY();
+     	
+     	for(int j = 0; j < box.size(); j++) {
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+     			i = box.size()-1;
 
-		  	}
-		  	else if(direction.equals("left"))
-		  	{
-		  		box.get(i).rightX();
-		  		notHit = false;
-		  	}
-		  	else
-		  	{
-		  		box.get(i).leftX();
-		  		notHit = false;
-		  	}	
-		  	}
-		  }
-		}
-	}
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			
+     			box.get(i).downY();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }
+  if(direction.equals("down"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getY() < 595 && !stop) {
+     	box.get(i).downY();
+     	for(int j = 0; j < box.size(); j++) {
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+     			i = box.size()-1;
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			box.get(i).upY();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }
+  if(direction.equals("right"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getX() < 595 && !stop) {
+     	box.get(i).rightX();
+     	for(int j = 0; j < box.size(); j++) {
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+                i = box.size()-1;
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			box.get(i).leftX();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }
+  if(direction.equals("left"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getX() > 10 && !stop) {
+     	box.get(i).leftX();
+     	for(int j = 0; j < box.size(); j++) {  // removing a box resets i
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+     			i = box.size()-1;
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			box.get(i).rightX();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }			  	
 }
+public void keyPressed()
+ {
+    if(key == CODED)
+	{
+	   if(keyCode == UP)
+	   {
+        detection("up");	
+	      insertNewTile();
+	   }
+	   else if(keyCode == DOWN)
+	   {
+		    detection("down");	
+	      insertNewTile();
+	   }
+	   else if(keyCode == LEFT)
+	   {
+        detection("left");
+	      insertNewTile();
+	   }
+	   else if(keyCode == RIGHT)
+	   {
+	   	detection("right");	
+	   	insertNewTile();
+	   }
+	}
+ }	
+ public void insertNewTile()
+ {
+  isEmpty = true;
+ 	if(box.size() < 16)
+    {
+      int boxRandX = 10 + 195*(int)(Math.random()*4);
+      int boxRandY = 10 + 195*(int)(Math.random()*4);
+      for(Boxes thisBox : box) {
+        if(thisBox.getX() == boxRandX && thisBox.getY() == boxRandY) {
+          isEmpty = false;
+        }
+      }
+      if(isEmpty) {
+        box.add(new Boxes(boxRandX,boxRandY,2*((int)(Math.random()*2)+1)));
+        System.out.println(box.size());
+      }
+      else {
+        insertNewTile();
+      }
+    }
+    else {
+      gameover = true;
+    }
+ }
+
 class Boxes
 {
 	private int r,g,b, x, y;
@@ -148,6 +258,16 @@ class Boxes
 		textAlign(CENTER);
 		text(boxValue,x+(side/2),y+120);
 	}
+	public boolean equals(Boxes nextBox) {
+       if(this.getX() == nextBox.getX() && this.getY() == nextBox.getY()
+       	  && this.getValue() == nextBox.getValue()) {
+       	return true;
+       }
+       else {
+       	return false;
+       }
+
+	}
 	public int getX()  {return x;} //return x position
 	public int getY()  {return y;} //return y position
 	public int getValue() {return boxValue;} //return boxValue
@@ -157,100 +277,7 @@ class Boxes
 	public void leftX() {x = x - 195;}
 	public void rightX() {x = x + 195;}
  }
- public void keyPressed()
- {
-    if(key == CODED)
-	{
-	   if(keyCode == UP)
-	   {
-	     for(int i = 0; i < box.size(); i++)
-	     {
-	     	boxRemoved = false;
-	     	notHit = true;
-	     	while(box.get(i).getY()-195 >= 10 && notHit)
-	     	{
-
-	     	     box.get(i).upY();
-	     	     globalNum = i;
-                 detection("up");	
-
-
-	     	}
-	     }
-	     addBox();
-	   }
-	   else if(keyCode == DOWN)
-	   {
-		
-	   	for(int i = 0; i < box.size(); i++)
-	     {
-	     	boxRemoved = false;
-	     	notHit = true;
-	     	while(box.get(i).getY()+195 <= 595 && notHit)
-	     	{
  
-	     		 box.get(i).downY();
-	     		 globalNum =i;
-                 detection("down");	
-
-
-	     	}
-	     }
-	     addBox();
-	   }
-	   else if(keyCode == LEFT)
-	   {
-		
-		
-	   	for(int i = 0; i < box.size(); i++)
-	     {
-			boxRemoved = false;
-	     	notHit = true;
-	     	while(box.get(i).getX() -195 >= 10 && notHit)
-	     	{
-
-	     		  box.get(i).leftX();
-	     		  globalNum = i;
-                  detection("left");
-
-	     	}
-	     }
-	     addBox();
-	   }
-	   else if(keyCode == RIGHT)
-	   {
-		
-		
-	   	for(int i =0; i< box.size(); i++)
-	   	{
-	   		boxRemoved = false;
-	   		notHit = true;
-	   		while(box.get(i).getX()+195 <=595 && notHit)
-	   		{
-
-	   		    box.get(i).rightX();
-	   		    globalNum = i;
-	   			detection("right");	
-	   			
-
-	   		}
-	   	}
-	   	addBox();
-	   }
-
-	}
- }	
- public void addBox()
- {
- 	if(box.size() < 16)
-    {
- 	for(int i = 2; i>0; i--)
-	{
-		box.add(new Boxes(10+195*(int)(Math.random()*4),10+195*(int)(Math.random()*4),2));
-	}
-	initialDetection();
-    }
- }
   public void settings() { 	size(800,800); }
   static public void main(String[] passedArgs) {
     String[] appletArgs = new String[] { "TwoZeroFourEight" };
