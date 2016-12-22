@@ -31,7 +31,7 @@ void draw()
 		}
     if(gameover) {
       text("GAME OVER", 400,400);
-      //noLoop();
+      noLoop();
     }
 	}
 	
@@ -170,26 +170,28 @@ void detection(String direction)
 }
 void keyPressed()
  {
-   if(key == 'w')
-   {
-     detection("up");	
-     insertNewTile();
-   }
-   else if(key == 's')
-   {
-     detection("down");	
-     insertNewTile();
-   }
-   else if(key == 'a')
-   {
-     detection("left");
-     insertNewTile();
-   }
-   else if(key == 'd')
-   {
-      detection("right");	
-      insertNewTile();
-   }
+
+	   if(key == 'w')
+	   {
+        detection("up");	
+	      insertNewTile();
+	   }
+	   else if(key == 's')
+	   {
+		    detection("down");	
+	      insertNewTile();
+	   }
+	   else if(key == 'a')
+	   {
+        detection("left");
+	      insertNewTile();
+	   }
+	   else if(key == 'd')
+	   {
+	   	detection("right");	
+	   	insertNewTile();
+	   }
+	
  }	
  void insertNewTile()
  {
