@@ -170,29 +170,26 @@ void detection(String direction)
 }
 void keyPressed()
  {
-    if(key == CODED)
-	{
-	   if(keyCode == UP)
-	   {
-        detection("up");	
-	      insertNewTile();
-	   }
-	   else if(keyCode == DOWN)
-	   {
-		    detection("down");	
-	      insertNewTile();
-	   }
-	   else if(keyCode == LEFT)
-	   {
-        detection("left");
-	      insertNewTile();
-	   }
-	   else if(keyCode == RIGHT)
-	   {
-	   	detection("right");	
-	   	insertNewTile();
-	   }
-	}
+   if(key == 'w')
+   {
+     detection("up");	
+     insertNewTile();
+   }
+   else if(key == 's')
+   {
+     detection("down");	
+     insertNewTile();
+   }
+   else if(key == 'a')
+   {
+     detection("left");
+     insertNewTile();
+   }
+   else if(key == 'd')
+   {
+      detection("right");	
+      insertNewTile();
+   }
  }	
  void insertNewTile()
  {
