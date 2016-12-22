@@ -1,4 +1,8 @@
 int side = 195;
+boolean start = true;
+boolean gameover = false;
+boolean boxRemoved = false;
+boolean isEmpty;
 ArrayList <Boxes> box;
 void setup()
 {
@@ -7,49 +11,217 @@ void setup()
 	fill(255);
 	rect(10,10,780,780);
 	box = new ArrayList <Boxes> ();
-	for(int i = 5; i>0; i--)
+	for(int i = 4; i>0; i--)
 	{
 
-		box.add(new Boxes(10+195*(int)(Math.random()*i),10+195*(int)(Math.random()*i),2));
+		box.add(new Boxes(10+195*(int)(Math.random()*4),10+195*(int)(Math.random()*4),2));
 	}
 }
 void draw()
+{		
+	fill(255);
+	rect(10,10,780,780);
+	if(start)
+	{
+	  initialDetection();
+	}
+	else {
+		for (Boxes thisBox : box) {
+			thisBox.show();
+		}
+    if(gameover) {
+      text("GAME OVER", 400,400);
+      noLoop();
+    }
+	}
+	
+	
+}
+// to ensure initial set up is correct
+void initialDetection()
 {
 	for(int i = 0; i< box.size(); i++)
 	{
-		for(int j = box.size()-1; j > i; j--)
+		for(int j = box.size()-1; j > i; j--) //see if box matches other boxes
 		{
-		  if(box.get(i).getX() == box.get(j).getX() && box.get(i).getY() == box.get(j).getY())
+		  if(box.get(i).equals(box.get(j)))
 		  {
-		  	if(box.get(i).getValue() == box.get(j).getValue())
-		  	{
-		  		box.get(i).setBoxValue(2*box.get(i).getValue());
-		  		box.remove(j);
-		  		j--;
-		  	}
-		  	else
-		  	{
-		  		box.remove(j);
-		  		box.add(new Boxes(10+195*(int)(Math.random()*i),10+195*(int)(Math.random()*i),2));
-		  		j ++;
-		  	}
+		  	box.get(i).setBoxValue(2*box.get(i).getValue());
+		  	box.remove(j);
+		  }
+		  else if(box.get(i).getX() == box.get(j).getX() &&
+		  	      box.get(i).getY() == box.get(j).getY())
+		  {
+		  	box.remove(j);
+		  	box.add(new Boxes(10+195*(int)(Math.random()*4),10+195*(int)(Math.random()*4),2));
 		  }	
 		}
 		
 		box.get(i).show();
-		//box.get(i).move();
 	}
+	System.out.println(box.size());
+	start = false;
 }
-interface generalBox
+
+void detection(String direction)
 {
-	void move();
-	void show();
+
+  if(direction.equals("up"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getY() > 10 && !stop) {
+     	box.get(i).upY();
+     	
+     	for(int j = 0; j < box.size(); j++) {
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+     			i = box.size()-1;
+
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			
+     			box.get(i).downY();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }
+  if(direction.equals("down"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getY() < 595 && !stop) {
+     	box.get(i).downY();
+     	for(int j = 0; j < box.size(); j++) {
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+     			i = box.size()-1;
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			box.get(i).upY();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }
+  if(direction.equals("right"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getX() < 595 && !stop) {
+     	box.get(i).rightX();
+     	for(int j = 0; j < box.size(); j++) {
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+                i = box.size()-1;
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			box.get(i).leftX();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }
+  if(direction.equals("left"))
+  {
+   for(int i = box.size()-1; i >= 0; i--) {
+     boolean stop = false;
+     while(box.get(i).getX() > 10 && !stop) {
+     	box.get(i).leftX();
+     	for(int j = 0; j < box.size(); j++) {  // removing a box resets i
+     		if(j != i) {
+     		if(box.get(i).equals(box.get(j))) {
+     			
+     			box.get(j).setBoxValue(2*(box.get(j).getValue()));
+     			box.remove(i);
+     			i = box.size()-1;
+     		}
+     		else if(box.get(i).getX() == box.get(j).getX() &&
+     			    box.get(i).getY() == box.get(j).getY() &&
+     			    box.get(i).getValue() != box.get(j).getValue()) {
+     			box.get(i).rightX();
+     		    stop = true;
+     		}
+     	    }
+     	}
+     }
+   }
+  }			  	
 }
+void keyPressed()
+ {
+
+	   if(key == 'w')
+	   {
+        detection("up");	
+	      insertNewTile();
+	   }
+	   else if(key == 's')
+	   {
+		    detection("down");	
+	      insertNewTile();
+	   }
+	   else if(key == 'a')
+	   {
+        detection("left");
+	      insertNewTile();
+	   }
+	   else if(key == 'd')
+	   {
+	   	detection("right");	
+	   	insertNewTile();
+	   }
+	
+ }	
+ void insertNewTile()
+ {
+  isEmpty = true;
+ 	if(box.size() < 16)
+    {
+      int boxRandX = 10 + 195*(int)(Math.random()*4);
+      int boxRandY = 10 + 195*(int)(Math.random()*4);
+      for(Boxes thisBox : box) {
+        if(thisBox.getX() == boxRandX && thisBox.getY() == boxRandY) {
+          isEmpty = false;
+        }
+      }
+      if(isEmpty) {
+        box.add(new Boxes(boxRandX,boxRandY,2*((int)(Math.random()*2)+1)));
+        //System.out.println(box.size());
+      }
+      else {
+        insertNewTile();
+      }
+    }
+    else {
+      gameover = true;
+    }
+ }
 
 class Boxes
 {
-	int r,g,b, x, y;
-	int boxValue;
+	private int r,g,b, x, y;
+	private int boxValue;
 	Boxes(int entryX, int entryY, int entryV)
 	{
 		x = entryX;
@@ -61,23 +233,31 @@ class Boxes
 	}
 	public void show()
 	{
-		strokeWeight(5);
+		strokeWeight(3);
  		fill(r,g,b,110);
 		rect(x,y,side,side);
 		fill(0);
-		textSize(104);
+		textSize(90);
 		textAlign(CENTER);
 		text(boxValue,x+(side/2),y+120);
+	}
+	public boolean equals(Boxes nextBox) {
+       if(this.getX() == nextBox.getX() && this.getY() == nextBox.getY()
+       	  && this.getValue() == nextBox.getValue()) {
+       	return true;
+       }
+       else {
+       	return false;
+       }
+
 	}
 	public int getX()  {return x;} //return x position
 	public int getY()  {return y;} //return y position
 	public int getValue() {return boxValue;} //return boxValue
 	public void setBoxValue(int a){boxValue = a;} // set box value
-	public void move()
-	{
-		if(key == CODED)
-		{
-		
-		}
-	}	
-}
+	public void upY() {y = y -195;}
+	public void downY() {y = y + 195;}
+	public void leftX() {x = x - 195;}
+	public void rightX() {x = x + 195;}
+ }
+ 
