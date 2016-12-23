@@ -168,9 +168,9 @@ void detection(String direction)
    }
   }			  	
 }
-void keyPressed()
+public void keyPressed()
  {
-     insertNewTile();
+ 
 	   if(key == 'w')
 	   {
         detection("up");	
